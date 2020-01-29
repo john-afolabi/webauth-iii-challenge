@@ -3,7 +3,7 @@ const { addUser, findUser, getUsers } = require("../helpers/users-model");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { restricted } = require("../middleware/restricted-middleware");
+const { restricted, restrictUserByDepartment } = require("../middleware");
 
 function createToken(user) {
   const payload = {
@@ -61,16 +61,8 @@ router.post("/logout", (req, res) => {
     .json({ message: `You have logged out successfully. Goodbye!` });
 });
 
-router.get("/", restricted, (req, res) => {
-  getUsers()
-    .then(users => {
-      res.status(200).json(users);
-    })
-    .catch(error => {
-      res.status(500).json({
-        errorMessage: `Could not retrieve registered users at this moment`
-      });
-    });
+router.get("/", restrictUserByDepartment, (req, res) => {
+  res.status(200).json(req.users);
 });
 
 module.exports = router;

@@ -4,7 +4,9 @@ module.exports = {
   addUser,
   getUsers,
   findUser,
-  getUserById
+  getUserById,
+  getUserDepartmentById,
+  getUsersInDepartment
 };
 
 function getUsers() {
@@ -28,4 +30,15 @@ function getUserById(id) {
   return db("user")
     .where({ id })
     .first();
+}
+
+function getUserDepartmentById(id) {
+  return db("user")
+    .select("department")
+    .where({ id })
+    .first();
+}
+
+function getUsersInDepartment(department) {
+  return db("user").where({ department });
 }
