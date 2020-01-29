@@ -7,7 +7,7 @@ const user = {
   password: ""
 };
 
-function Login() {
+function Login(props) {
   const [formValues, setFormValues] = useState(user);
 
   const onInputChange = event => {
@@ -22,7 +22,8 @@ function Login() {
     axios
       .post("http://localhost:5000/api/users/login", formValues)
       .then(res => {
-        console.log(res.data);
+        localStorage.setItem("token", res.data.token);
+        props.history.push("/users");
       })
       .catch(err => {
         console.log(err.message);

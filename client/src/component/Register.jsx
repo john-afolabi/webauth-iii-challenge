@@ -5,10 +5,10 @@ import axios from "axios";
 const user = {
   username: "",
   password: "",
-  department: ""
+  department: "IT"
 };
 
-function Register() {
+function Register(props) {
   const [formValues, setFormValues] = useState(user);
 
   const onInputChange = event => {
@@ -23,7 +23,7 @@ function Register() {
     axios
       .post("http://localhost:5000/api/users/register", formValues)
       .then(res => {
-        console.log(res.data);
+        props.history.push("/");
       })
       .catch(err => {
         console.log(err.message);
