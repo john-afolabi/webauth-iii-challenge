@@ -2,6 +2,25 @@ const express = require("express");
 const { addUser, findUser, getUsers } = require("../helpers/users-model");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const { restricted } = require("../middleware/restricted-middleware");
+
+function createToken(user) {
+  const payload = {
+    sub: user.id,
+    username: user.username,
+    department: user.department
+  };
+  const options = {
+    expiresIn: "30d"
+  };
+  const token = jwt.sign(
+    payload,
+    process.env.JWT_SECRET || "78#992dsoj=|ds",
+    options
+  );
+  return token;
+}
 
 router.post("/register", (req, res) => {
   const { username, password, department } = req.body;
@@ -27,8 +46,8 @@ router.post("/login", (req, res) => {
     .first()
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        req.session.loggedInUser = user;
-        res.status(200).json({ message: `Welcome ${user.username}!` });
+        const token = createToken(user);
+        res.status(200).json({ message: `Welcome ${user.username}!`, token });
       } else {
         res.status(401).json({ message: "You shall not pass" });
       }
@@ -42,7 +61,7 @@ router.post("/logout", (req, res) => {
     .json({ message: `You have logged out successfully. Goodbye!` });
 });
 
-router.get("/users", (req, res) => {
+router.get("/", restricted, (req, res) => {
   getUsers()
     .then(users => {
       res.status(200).json(users);
