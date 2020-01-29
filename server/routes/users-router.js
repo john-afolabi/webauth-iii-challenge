@@ -3,13 +3,11 @@ const { addUser, findUser, getUsers } = require("../helpers/users-model");
 const bcrypt = require("bcryptjs");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const { restricted, restrictUserByDepartment } = require("../middleware");
+const { restrictUserByDepartment } = require("../middleware");
 
 function createToken(user) {
   const payload = {
-    sub: user.id,
-    username: user.username,
-    department: user.department
+    sub: user.idred
   };
   const options = {
     expiresIn: "30d"
